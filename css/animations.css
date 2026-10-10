@@ -1,0 +1,223 @@
+/**
+ * ============================================================================
+ *  File    : css/animations.css
+ *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Module  : All motion (keyframes, transitions, reduced-motion switch)
+ * ============================================================================
+ *
+ *  WHAT THIS FILE DOES
+ *  -------------------
+ *  Every animation lives here, so it can be turned down in ONE place. No
+ *  colours or layout are defined here, only motion (colours come from the
+ *  glow tokens in base.css).
+ *
+ *  WHAT I IMPLEMENTED
+ *  ------------------
+ *  1. Visualizer pipeline: .viz-enter and .viz-step-enter fade and slide a new
+ *     stage in; .viz-current gets a one-time glow; the rows inside a step
+ *     appear one after another and the LAST row (the new hash value) does the
+ *     XOR "merge" pop.
+ *  2. Bits: .bit-changed flips like a card (bit-flip). Utility classes you can
+ *     add from JavaScript: .anim-flip (flip), .anim-rotate (the one-position
+ *     left slide used for RXOR's rotation), .anim-merge (XOR merge pop).
+ *  3. Hash match / mismatch: a green pulse ring when a card or banner enters
+ *     data-state="match", and a red ring with a short shake for "mismatch".
+ *     The animation restarts whenever the state changes.
+ *  4. Race lanes: a moving stripe on top of a running lane (data-state).
+ *  5. Analyzer heatmap: cells fade in; set --row (0, 1, 2 ...) on a cell or
+ *     row for a small staggered delay.
+ *  6. Toasts: .toast starts hidden; .toast-show (added by toast.js on the next
+ *     frame) fades it in, .toast-hide (added when closing) slides it out in
+ *     250 ms, the same time toast.js waits before removing it.
+ *  7. @media (prefers-reduced-motion: reduce) switches all animation and
+ *     transition time to almost zero. The final state still applies, so
+ *     toasts still appear and everything still works, just without motion.
+ *
+ *  USED BY : every page
+ *  DEPENDS : css/base.css (glow tokens), class names from components.css
+ * ============================================================================
+ */
+
+/* ========================================================================== *
+ *  Keyframes
+ * ========================================================================== */
+@keyframes viz-enter {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes row-in {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes current-glow {
+  0%   { box-shadow: 0 0 0 0 var(--accent-glow); }
+  100% { box-shadow: 0 0 0 14px transparent; }
+}
+
+@keyframes bit-flip {
+  0%   { transform: perspective(240px) rotateX(0deg); }
+  50%  { transform: perspective(240px) rotateX(90deg); }
+  100% { transform: perspective(240px) rotateX(0deg); }
+}
+
+@keyframes rotate-slide {
+  from { transform: translateX(1.7rem); opacity: 0.2; }
+  to   { transform: none; opacity: 1; }
+}
+
+@keyframes xor-merge {
+  0%   { transform: scale(0.9); opacity: 0.35; box-shadow: 0 0 0 0 var(--accent-glow); }
+  60%  { transform: scale(1.04); opacity: 1;   box-shadow: 0 0 0 10px transparent; }
+  100% { transform: none; opacity: 1; box-shadow: 0 0 0 0 transparent; }
+}
+
+@keyframes pulse-match {
+  0%   { box-shadow: 0 0 0 0 var(--good-glow); }
+  70%  { box-shadow: 0 0 0 16px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+@keyframes pulse-mismatch {
+  0%   { box-shadow: 0 0 0 0 var(--bad-glow); transform: translateX(0); }
+  20%  { transform: translateX(-5px); }
+  40%  { transform: translateX(5px); }
+  60%  { transform: translateX(-3px); }
+  80%  { transform: translateX(3px); }
+  100% { box-shadow: 0 0 0 16px transparent; transform: translateX(0); }
+}
+
+@keyframes lane-stripes {
+  from { background-position: 0 0; }
+  to   { background-position: 2rem 0; }
+}
+
+@keyframes heat-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ========================================================================== *
+ *  1. Visualizer pipeline
+ * ========================================================================== */
+.viz-enter,
+.viz-step-enter {
+  animation: viz-enter 450ms ease both;
+}
+
+.viz-panel.viz-current {
+  animation: current-glow 1600ms ease-out 1;
+}
+
+.viz-step-enter .viz-row {
+  animation: row-in 380ms ease both;
+}
+
+.viz-step-enter .viz-row:nth-child(2) { animation-delay: 120ms; }
+.viz-step-enter .viz-row:nth-child(3) { animation-delay: 240ms; }
+.viz-step-enter .viz-row:nth-child(4) { animation-delay: 360ms; }
+.viz-step-enter .viz-row:nth-child(5) { animation-delay: 480ms; }
+
+/* The last row is the new running hash: the XOR "merge" pop */
+.viz-step-enter .viz-row:last-child {
+  animation: row-in 380ms ease both, xor-merge 800ms ease-out 400ms both;
+}
+
+/* ========================================================================== *
+ *  2. Bits
+ * ========================================================================== */
+.bit-changed,
+.anim-flip {
+  animation: bit-flip 600ms ease-out both;
+}
+
+.anim-rotate {
+  animation: rotate-slide 500ms ease-out both;
+}
+
+.anim-merge {
+  animation: xor-merge 800ms ease-out both;
+}
+
+/* ========================================================================== *
+ *  3. Hash match / mismatch
+ * ========================================================================== */
+.hash-card[data-state="match"],
+.forgery-banner[data-state="match"] {
+  animation: pulse-match 900ms ease-out 2;
+}
+
+.hash-card[data-state="mismatch"],
+.forgery-banner[data-state="mismatch"] {
+  animation: pulse-mismatch 700ms ease-out 1;
+}
+
+/* ========================================================================== *
+ *  4. Race lanes
+ * ========================================================================== */
+.race-lane[data-state="running"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--accent) 0,
+    var(--accent) 1rem,
+    transparent 1rem,
+    transparent 2rem
+  );
+  background-size: 2rem 100%;
+  animation: lane-stripes 700ms linear infinite;
+}
+
+/* ========================================================================== *
+ *  5. Analyzer heatmap
+ * ========================================================================== */
+.heatmap-cell {
+  animation: heat-in 400ms ease both;
+  animation-delay: calc(min(var(--row, 0), 40) * 15ms);
+}
+
+/* ========================================================================== *
+ *  6. Toasts (toast.js adds .toast-show, then .toast-hide when closing)
+ * ========================================================================== */
+.toast {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+
+.toast.toast-show {
+  opacity: 1;
+  transform: none;
+}
+
+.toast.toast-hide {
+  opacity: 0;
+  transform: translateX(24px);
+}
+
+/* ========================================================================== *
+ *  7. Reduced motion: keep every final state, remove the movement
+ * ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+/* ========================================================================== *
+ *  5. Analyzer heatmap (a bitGrid inside .analyzer-heatmap)
+ * ========================================================================== */
+.analyzer-heatmap .bit-cell {
+  animation: heat-in 400ms ease both;
+}

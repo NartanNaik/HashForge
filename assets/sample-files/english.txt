@@ -1,0 +1,21 @@
+A hash function takes a message of any length and turns it into a short,
+fixed-size fingerprint. The same message always gives the same fingerprint,
+but two different messages should almost never give the same one.
+
+Hash functions are used everywhere: to check that a downloaded file was not
+damaged, to store passwords without keeping the passwords themselves, and to
+build digital signatures that prove a message has not been changed.
+
+A good hash function is easy to compute but very hard to reverse. Given only
+the fingerprint, nobody should be able to find the original message, or even
+another message with the same fingerprint. Changing a single letter of the
+input should change about half of the output bits, which is called the
+avalanche effect.
+
+Plain English text is highly predictable. Every character is stored as one
+ASCII byte, and the highest-order bit of each of those bytes is always zero.
+That means a lot of the available bits carry no information at all, and a
+simple hash built from such text wastes part of its output size.
+
+The quick brown fox jumps over the lazy dog. Pack my box with five dozen
+liquor jugs. How vexingly quick daft zebras jump! 0123456789

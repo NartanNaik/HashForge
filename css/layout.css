@@ -1,0 +1,294 @@
+/**
+ * ============================================================================
+ *  File    : css/layout.css
+ *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Module  : Page structure, grids and responsive breakpoints
+ * ============================================================================
+ *
+ *  WHAT THIS FILE DOES
+ *  -------------------
+ *  Positions things: the sticky header and navbar, the page container, the
+ *  vertical rhythm of each view, and every grid the views use. How things
+ *  LOOK (colours, borders, cards) is in components.css.
+ *
+ *  WHAT I IMPLEMENTED
+ *  ------------------
+ *  1. Page frame: body is a column so the footer sits at the bottom;
+ *     #view is centred, max --content-max wide.
+ *  2. Header: sticky, brand on the left, tab nav in the middle, theme toggle
+ *     on the right. On narrow screens the nav becomes a horizontally
+ *     scrolling strip on its own row.
+ *  3. View container: each of the five views is a vertical stack with a gap.
+ *  4. Control rows: .viz-controls, .forgery-controls, .collision-controls,
+ *     .analyzer-controls are auto-fit grids (message fields get double width
+ *     on wide screens). Button rows (.viz-buttons, .forgery-actions,
+ *     .collision-actions) wrap.
+ *  5. Result grids, all auto-fit so they collapse to one column by themselves:
+ *       .forgery-panels (3 panels)         .race-lanes  .avalanche-cards
+ *       .viz-columns (XOR | RXOR)          .collision-messages
+ *       .forgery-hashes  .forgery-sha-cards  .collision-hashes  .learn-grid
+ *  6. Breakpoints:
+ *       up to 720px   tighter padding, tagline hidden, nav strip scrolls
+ *       1600px and up root font 112.5% (large laptop screens)
+ *       2200px and up root font 125%   (projector / full-HD TV)
+ *     Everything uses rem, so the whole UI scales with the root size.
+ *  7. scroll-margin on the Learn sections so the sticky header never hides
+ *     a heading after a "jump to" button.
+ *
+ *  USED BY : every page
+ *  DEPENDS : css/base.css (tokens)
+ * ============================================================================
+ */
+
+/* ---------- Page frame ---------- */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+#view {
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-7);
+  outline: none;
+}
+
+/* ---------- Header and navbar ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-2) var(--space-4);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: var(--text);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.site-nav {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-1);
+}
+
+.theme-toggle {
+  margin-left: auto;
+}
+
+.site-footer {
+  flex-shrink: 0;
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+/* ---------- Views: vertical stacks ---------- */
+.visualizer-view,
+.forgery-view,
+.analyzer-view,
+.collision-view,
+.learn-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.viz-intro,
+.forgery-intro,
+.collision-intro,
+.analyzer-intro,
+.learn-intro {
+  max-width: 75ch;
+}
+
+.viz-pipeline,
+.forgery-result,
+.collision-section,
+.learn-section,
+.avalanche-results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.collision-panel,
+.viz-panel,
+.forgery-panel,
+.learn-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ---------- Control rows ---------- */
+.viz-controls,
+.forgery-controls,
+.collision-controls,
+.analyzer-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: var(--space-3) var(--space-4);
+  align-items: end;
+}
+
+.viz-buttons,
+.forgery-actions,
+.collision-actions,
+.learn-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+@media (min-width: 46rem) {
+  :is(.viz-controls, .forgery-controls, .collision-controls, .analyzer-controls)
+    .field:has(input[type="text"], input:not([type]), textarea) {
+    grid-column: span 2;
+  }
+}
+
+/* ---------- Result grids ---------- */
+.forgery-panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.race-lanes,
+.avalanche-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-3);
+}
+
+.viz-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.collision-messages,
+.collision-hashes,
+.forgery-hashes,
+.forgery-sha-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--space-3);
+}
+
+.learn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--space-4);
+  align-items: stretch;
+}
+
+.viz-row {
+  display: grid;
+  grid-template-columns: minmax(6rem, 9rem) minmax(0, 1fr);
+  gap: var(--space-2) var(--space-3);
+  align-items: center;
+}
+
+/* ---------- Learn page: sticky header offset ---------- */
+.learn-section,
+.learn-section > h2 {
+  scroll-margin-top: 5.5rem;
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 45rem) {
+  #view {
+    padding: var(--space-4) var(--space-3) var(--space-6);
+  }
+
+  .site-header-inner {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .brand-tag {
+    display: none;
+  }
+
+  .site-nav {
+    order: 3;
+    flex: 1 0 100%;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: var(--space-1);
+  }
+
+  .viz-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------- Big screens: scale everything (all sizes are rem) ---------- */
+@media (min-width: 100rem) {
+  html { font-size: 112.5%; }
+}
+
+@media (min-width: 137.5rem) {
+  html { font-size: 125%; }
+}
+/* ---------- Analyzer layout (names from analyzerView.js) ---------- */
+.analyzer-results,
+.analyzer-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.analyzer-results {
+  gap: var(--space-5);
+}
+
+.analyzer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.analyzer-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: var(--space-3);
+}

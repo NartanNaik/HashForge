@@ -1,0 +1,1564 @@
+/**
+ * ============================================================================
+ *  File    : css/components.css
+ *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Module  : Look of every reusable piece and every view element
+ * ============================================================================
+ *
+ *  WHAT THIS FILE DOES
+ *  -------------------
+ *  Gives colour, borders, type and states to everything the JavaScript files
+ *  create. Layout (grids, spacing between big blocks) is in layout.css, and
+ *  motion is in animations.css. Class names come from the header comments of
+ *  the view and component files.
+ *
+ *  WHAT I IMPLEMENTED (in this order)
+ *  ----------------------------------
+ *   1. Brand and theme toggle, navbar TABS (.site-nav a, .active and
+ *      aria-current="page" get a bold weight AND an underline bar, so the
+ *      active tab is not colour-only).
+ *   2. Buttons. Base style uses :where() (zero specificity) so any specific
+ *      class below can override it:
+ *        default button     neutral
+ *        .btn-primary | button.primary | button[data-variant="primary"]
+ *                           filled accent button (use it for Play, Forge it ...)
+ *   3. Inputs: text, number, textarea, select, checkbox; .field,
+ *      .field-label, .field-check.
+ *   4. Cards (one shared rule for every panel-like class), intro text, note
+ *      and warning callouts (warnings get a text-mark, not only colour), empty
+ *      states, status lines.
+ *   5. BIT CELLS: .bit-grid, .bit-cell with .bit-0 / .bit-1, .bit-changed
+ *      (thick outline), .bit-fixed (dashed outline). A cell may be a <button>
+ *      (clickable input grid in the avalanche test). These are the names I
+ *      will use when writing bitGrid.js.
+ *   6. Hash card (.hash-card, data-state neutral | match | mismatch).
+ *   7. Toasts (.toast-container, .toast-info/success/warning/error ...).
+ *   8. Tooltips: any element with data-tooltip="text".
+ *   9. Visualizer: segments (3 Slide-2 colours + text labels), blocks, rows,
+ *      tables, progress bar, current-stage highlight.
+ *  10. Forgery Lab: banner, block rows, maths steps, sent message.
+ *  11. Collision and Avalanche Lab: message boxes, race lanes (data-state),
+ *      chart boxes, avalanche cards.
+ *  12. Learn page: formula blocks, tables, link pills.
+ *  13. Analyzer: heatmap, fixed-bits table (names planned for analyzerView.js).
+ *  14. Router messages (.router-message ...).
+ *
+ *  ACCESSIBILITY
+ *  -------------
+ *  - Match / mismatch / warning / error states always come with words or
+ *    marks (HASHES MATCH, check and cross, a warning sign), never colour alone.
+ *  - Controls are at least 2.5rem tall (comfortable on touch and projector).
+ *  - Focus rings come from base.css (:focus-visible).
+ *
+ *  USED BY : every page
+ *  DEPENDS : css/base.css (tokens)
+ * ============================================================================
+ */
+
+/* ========================================================================== *
+ *  1. Brand, theme toggle, navbar tabs
+ * ========================================================================== */
+.brand-name {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.brand-tag {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.site-footer-sub {
+  font-size: 0.85rem;
+}
+
+.site-nav a {
+  padding: 0.5rem 0.95rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--muted);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--transition), color var(--transition);
+}
+
+.site-nav a:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.site-nav a.active,
+.site-nav a[aria-current="page"] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--text);
+  font-weight: 800;
+  box-shadow: inset 0 -3px 0 var(--accent);
+}
+
+.theme-toggle {
+  width: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+/* ========================================================================== *
+ *  2. Buttons
+ * ========================================================================== */
+:where(button, .btn) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4em;
+  min-height: 2.5rem;
+  padding: 0.45rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+:where(button:hover:not(:disabled), .btn:hover) {
+  background: var(--surface-3);
+  border-color: var(--accent);
+}
+
+:where(button:active:not(:disabled)) {
+  transform: translateY(1px);
+}
+
+:where(button:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary,
+button.primary,
+button[data-variant="primary"] {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-color: var(--accent);
+}
+
+.btn-primary:hover:not(:disabled),
+button.primary:hover:not(:disabled),
+button[data-variant="primary"]:hover:not(:disabled) {
+  background: var(--accent);
+  filter: brightness(1.12);
+}
+
+/* ========================================================================== *
+ *  3. Inputs
+ * ========================================================================== */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.field-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+input[type="text"],
+input[type="search"],
+input[type="number"],
+input:not([type]),
+textarea,
+select {
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.45rem 0.7rem;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+}
+
+textarea {
+  min-height: 6rem;
+  font-family: var(--font-mono);
+  resize: vertical;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
+.field-check {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.5rem;
+}
+
+.field-check .field-label,
+.field-check span {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+input[type="file"] {
+  font: inherit;
+  color: var(--text);
+  max-width: 100%;
+}
+
+/* ========================================================================== *
+ *  4. Cards, intro, notes, warnings, empty states, status lines
+ * ========================================================================== */
+.viz-panel,
+.forgery-panel,
+.collision-panel,
+.learn-card,
+.learn-about,
+.race-lane,
+.message-box,
+.avalanche-col,
+.forgery-block,
+.viz-column,
+.analyzer-panel,
+.chart-box,
+.router-message {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+
+.viz-panel > :last-child,
+.forgery-panel > :last-child,
+.collision-panel > :last-child,
+.learn-card > :last-child,
+.viz-panel-body > :last-child {
+  margin-bottom: 0;
+}
+
+.viz-intro,
+.forgery-intro,
+.collision-intro,
+.analyzer-intro,
+.learn-intro,
+.learn-section-intro {
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.collision-panel-title,
+.collision-section > h2,
+.learn-card-title {
+  margin: 0;
+}
+
+/* Soft information callouts */
+.viz-note,
+.viz-tip,
+.viz-panel-note,
+.forgery-note,
+.forgery-info,
+.forgery-panel-note,
+.collision-note,
+.collision-hint,
+.race-note,
+.learn-note,
+.avalanche-summary,
+.sweep-summary {
+  padding: var(--space-2) var(--space-3);
+  background: var(--info-bg);
+  border-left: 4px solid var(--info);
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  color: var(--text);
+}
+
+.viz-panel-note,
+.forgery-panel-note,
+.collision-hint,
+.sweep-summary {
+  background: transparent;
+  border-left-color: var(--border-strong);
+  color: var(--muted);
+}
+
+/* Warnings: text mark + colour */
+.forgery-warning,
+.collision-warning {
+  padding: var(--space-2) var(--space-3);
+  background: var(--warn-bg);
+  border-left: 4px solid var(--warn);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.forgery-warning::before,
+.collision-warning::before {
+  content: "\26A0\00a0Warning: ";
+}
+
+/* Empty states */
+.viz-empty,
+.forgery-empty,
+.collision-empty {
+  padding: var(--space-5);
+  text-align: center;
+  color: var(--muted);
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+}
+
+/* Status lines */
+.viz-status,
+.collision-status,
+.sweep-progress {
+  min-height: 1.5em;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.sweep-progress {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* Verdict lines */
+.forgery-sha-verdict,
+.avalanche-verdict {
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-2);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+}
+
+/* Sections that compare with SHA-256 */
+.forgery-sha,
+.collision-sha {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 2px solid var(--border);
+}
+
+/* ========================================================================== *
+ *  5. Bit cells and bit grids
+ * ========================================================================== */
+.bit-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  min-width: 0;
+}
+
+.bit-grid-label {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.bit-grid-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.bit-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  align-items: flex-end;
+}
+
+.bit-byte {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+}
+
+.bit-byte-bits {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.bit-byte-value,
+.bit-byte-hex,
+.bit-position {
+  font-size: 0.7rem;
+  line-height: 1.2;
+  color: var(--muted);
+  text-align: center;
+}
+
+.bit-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 1.6rem;
+  min-height: 0;
+  height: 1.95rem;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  user-select: none;
+}
+
+.bit-0 {
+  background: var(--bit-0-bg);
+  color: var(--bit-0-text);
+}
+
+.bit-1 {
+  background: var(--bit-1-bg);
+  color: var(--bit-1-text);
+  font-weight: 800;
+}
+
+/* Changed bit: thick outline (shape, not only colour) */
+.bit-changed {
+  outline: 3px solid var(--changed);
+  outline-offset: 1px;
+  z-index: 1;
+}
+
+/* Fixed (always 0 / always 1) bit: dashed outline */
+.bit-fixed {
+  outline: 2px dashed var(--fixed);
+  outline-offset: 1px;
+}
+
+button.bit-cell {
+  cursor: pointer;
+}
+
+button.bit-cell:hover:not(:disabled) {
+  border-color: var(--accent);
+  transform: scale(1.12);
+  z-index: 2;
+}
+
+@media (max-width: 45rem) {
+  .bit-cell {
+    width: 1.35rem;
+    height: 1.7rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* ========================================================================== *
+ *  6. Hash card
+ * ========================================================================== */
+.hash-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  min-width: 0;
+}
+
+.hash-card[data-state="match"] {
+  border-color: var(--good);
+  background: var(--good-bg);
+}
+
+.hash-card[data-state="mismatch"] {
+  border-color: var(--bad);
+  background: var(--bad-bg);
+}
+
+.hash-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+}
+
+.hash-card-title {
+  font-weight: 800;
+}
+
+.hash-card-bits {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.hash-card-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem 0.75rem;
+}
+
+.hash-card-label {
+  min-width: 3.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.hash-card-value {
+  flex: 1 1 12rem;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.hash-card-copy {
+  min-height: 2rem;
+  margin-left: auto;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+.hash-card-grid {
+  overflow-x: auto;
+}
+
+.hash-card-status {
+  font-weight: 800;
+}
+
+.hash-card-status:empty {
+  display: none;
+}
+
+.hash-card[data-state="match"] .hash-card-status {
+  color: var(--good);
+}
+
+.hash-card[data-state="mismatch"] .hash-card-status {
+  color: var(--bad);
+}
+
+.hash-card details > summary {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ========================================================================== *
+ *  7. Toasts
+ * ========================================================================== */
+.toast-container {
+  position: fixed;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: min(26rem, calc(100vw - 2rem));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  background: var(--surface-3);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-left: 5px solid var(--info);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  pointer-events: auto;
+}
+
+.toast-success { border-left-color: var(--good); }
+.toast-warning { border-left-color: var(--warn); }
+.toast-error   { border-left-color: var(--bad); }
+
+.toast-icon {
+  flex-shrink: 0;
+  width: 1.4rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.toast-info .toast-icon    { color: var(--info); }
+.toast-success .toast-icon { color: var(--good); }
+.toast-warning .toast-icon { color: var(--warn); }
+.toast-error .toast-icon   { color: var(--bad); }
+
+.toast-message {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.toast-close {
+  flex-shrink: 0;
+  min-height: 1.9rem;
+  width: 1.9rem;
+  padding: 0;
+  background: transparent;
+  border-color: transparent;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* ========================================================================== *
+ *  8. Tooltips  (any element with data-tooltip="...")
+ * ========================================================================== */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.5rem);
+  z-index: 200;
+  width: max-content;
+  max-width: 16rem;
+  padding: 0.4rem 0.65rem;
+  background: var(--surface-3);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  transform: translateX(-50%);
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after {
+  opacity: 1;
+}
+
+/* ========================================================================== *
+ *  9. Visualizer
+ * ========================================================================== */
+.viz-progress {
+  display: block;
+  width: 100%;
+  height: 0.5rem;
+  background: var(--surface-3);
+  border: 0;
+  border-radius: 999px;
+  overflow: hidden;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.viz-progress > *,
+.viz-progress-bar {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 300ms ease;
+}
+
+progress.viz-progress::-webkit-progress-bar { background: var(--surface-3); }
+progress.viz-progress::-webkit-progress-value { background: var(--accent); }
+progress.viz-progress::-moz-progress-bar { background: var(--accent); }
+
+.viz-panel.viz-current {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow);
+}
+
+.viz-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.viz-message {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  overflow-wrap: anywhere;
+}
+
+.viz-info {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Padding diagram:  | M | padding bits | length of M |  */
+.viz-segments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.viz-segment {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 6rem;
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.viz-seg-message { border-color: var(--seg-message); }
+.viz-seg-padding { border-color: var(--seg-padding); border-style: dashed; }
+.viz-seg-length  { border-color: var(--seg-length);  border-style: dotted; }
+
+.viz-segment-label {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.viz-seg-message .viz-segment-label { color: var(--seg-message); }
+.viz-seg-padding .viz-segment-label { color: var(--seg-padding); }
+.viz-seg-length .viz-segment-label  { color: var(--seg-length); }
+
+.viz-blocks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.viz-block {
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+.viz-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--surface-2);
+}
+
+.viz-row-label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.viz-final {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ========================================================================== *
+ *  Tables (visualizer ASCII table, Learn tables)
+ * ========================================================================== */
+.viz-table,
+.learn-table,
+.learn-example-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.viz-table th,
+.viz-table td,
+.learn-table th,
+.learn-table td,
+.learn-example-table th,
+.learn-example-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.viz-table thead th,
+.learn-table thead th,
+.learn-example-table thead th {
+  background: var(--surface-2);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.viz-table td,
+.learn-example-table td {
+  font-family: var(--font-mono);
+}
+
+.learn-table tbody th[scope="row"] {
+  font-weight: 700;
+  background: var(--surface-2);
+}
+
+.learn-table caption {
+  padding: var(--space-2) 0;
+  text-align: left;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.viz-table tbody tr:nth-child(even) td,
+.learn-example-table tbody tr:nth-child(even) td {
+  background: var(--surface-2);
+}
+
+/* ========================================================================== *
+ *  10. Forgery Lab
+ * ========================================================================== */
+.forgery-banner {
+  padding: var(--space-4);
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  border: 2px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+}
+
+.forgery-banner[data-state="match"] {
+  color: var(--good);
+  background: var(--good-bg);
+  border-color: var(--good);
+}
+
+.forgery-banner[data-state="mismatch"] {
+  color: var(--bad);
+  background: var(--bad-bg);
+  border-color: var(--bad);
+}
+
+.forgery-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--surface-2);
+}
+
+.forgery-block-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem 0.75rem;
+}
+
+.forgery-block-label {
+  min-width: 4.5rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.forgery-block-value {
+  flex: 1 1 12rem;
+  min-width: 0;
+  font-family: var(--font-mono);
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.forgery-steps {
+  margin: 0;
+  padding: var(--space-3) var(--space-4) var(--space-3) 2rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.8;
+  overflow-x: auto;
+}
+
+.forgery-sent {
+  padding: var(--space-3);
+  background: var(--surface-2);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  overflow-wrap: anywhere;
+}
+
+/* ========================================================================== *
+ *  11. Collision and Avalanche Lab
+ * ========================================================================== */
+.message-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--surface-2);
+}
+
+.message-preview {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.message-hex {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.message-len {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* Race lanes (data-state: idle | running | done | error | cancelled) */
+.race-lane {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.race-lane-title {
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.race-lane-sub {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.race-lane-status {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.race-lane-attempts {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.race-lane-time {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.race-lane[data-state="running"]   { border-color: var(--accent); }
+.race-lane[data-state="done"]      { border-color: var(--good); background: var(--good-bg); }
+.race-lane[data-state="error"]     { border-color: var(--bad);  background: var(--bad-bg); }
+.race-lane[data-state="cancelled"] { border-color: var(--warn); border-style: dashed; }
+
+.race-lane[data-state="done"] .race-lane-status      { color: var(--good); }
+.race-lane[data-state="error"] .race-lane-status     { color: var(--bad); }
+.race-lane[data-state="cancelled"] .race-lane-status { color: var(--warn); }
+.race-lane[data-state="running"] .race-lane-status   { color: var(--accent); }
+
+.chart-box {
+  position: relative;
+  width: 100%;
+  min-height: 16rem;
+}
+
+.chart-box canvas {
+  width: 100% !important;
+}
+
+.avalanche-input {
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+}
+
+.avalanche-flipped {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.avalanche-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.avalanche-before {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.avalanche-count {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ========================================================================== *
+ *  12. Learn page
+ * ========================================================================== */
+.learn-nav button {
+  border-radius: 999px;
+  min-height: 2.25rem;
+  padding: 0.3rem 0.95rem;
+  font-size: 0.9rem;
+}
+
+.learn-formula {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  overflow-x: auto;
+}
+
+.learn-list {
+  margin: 0;
+}
+
+.learn-table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.learn-link {
+  display: inline-block;
+  padding: 0.25rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+}
+
+.learn-link:hover {
+  text-decoration: underline;
+}
+
+.learn-example {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  overflow-x: auto;
+}
+
+.learn-about {
+  background: var(--surface-2);
+}
+
+/* ========================================================================== *
+ *  13. Analyzer  (class names planned for analyzerView.js)
+ * ========================================================================== */
+.analyzer-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.heatmap {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--font-mono);
+  max-width: 100%;
+  overflow: auto;
+}
+
+.heatmap-row {
+  display: flex;
+  gap: 2px;
+}
+
+.heatmap-head,
+.heatmap-col-head {
+  width: 1.9rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--muted);
+}
+
+.heatmap-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.3rem;
+  font-size: 0.7rem;
+  border-radius: 3px;
+  background: var(--bit-0-bg);
+  background: color-mix(in srgb, var(--accent) calc(var(--v, 0) * 100%), var(--bit-0-bg));
+  color: var(--text);
+}
+
+.heatmap-cell.is-fixed,
+.heatmap-col-head.is-fixed {
+  outline: 2px dashed var(--fixed);
+  outline-offset: 1px;
+}
+
+.analyzer-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.analyzer-table th,
+.analyzer-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.analyzer-table thead th {
+  background: var(--surface-2);
+}
+
+.analyzer-result {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+/* ========================================================================== *
+ *  14. Router messages
+ * ========================================================================== */
+.router-message {
+  max-width: 40rem;
+  margin: var(--space-6) auto;
+  text-align: center;
+}
+
+.router-message-title {
+  margin: 0 0 var(--space-2);
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.router-message-text {
+  color: var(--muted);
+}
+
+.router-message-link {
+  display: inline-block;
+  margin-top: var(--space-2);
+  font-weight: 700;
+}
+
+/* ---- Names used by the real bitGrid.js (added after reading its header) ---- */
+.bit-positions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+}
+
+.bit-positions .bit-position {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.bit-hex {
+  align-self: center;
+  margin-left: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.bit-more {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Selected bit: solid ring in the accent colour */
+.bit-selected {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+/* Clickable cells (<button class="bit-cell bit-clickable">) */
+.bit-clickable {
+  cursor: pointer;
+}
+
+.bit-clickable:hover:not(:disabled) {
+  border-color: var(--accent);
+  transform: scale(1.12);
+  z-index: 2;
+}
+
+/* ========================================================================== *
+ *  5. Bit cells and bit grids  (matches the real js/ui/components/bitGrid.js)
+ *
+ *  DOM produced by renderBitGrid():
+ *    .bit-grid
+ *      .bit-row.bit-positions   (optional header: 7 6 5 4 3 2 1 0)
+ *        .bit-byte > .bit-position x 8
+ *      .bit-row
+ *        .bit-byte > .bit-cell x 8  (+ optional .bit-hex)
+ *      p.bit-more               (when more than maxBytes bytes)
+ *  Cell classes: .bit-0 | .bit-1, optional .bit-changed .bit-fixed
+ *  .bit-selected .bit-clickable (a <button> when onCellClick is given).
+ * ========================================================================== */
+.bit-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  min-width: 0;
+}
+
+.bit-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  align-items: center;
+}
+
+/* One byte = 8 cells side by side (+ optional hex label) */
+.bit-byte {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+}
+
+.bit-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 1.6rem;
+  min-height: 0;
+  height: 1.95rem;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  user-select: none;
+}
+
+.bit-0 {
+  background: var(--bit-0-bg);
+  color: var(--bit-0-text);
+}
+
+.bit-1 {
+  background: var(--bit-1-bg);
+  color: var(--bit-1-text);
+  font-weight: 800;
+}
+
+/* Changed bit: thick outline (shape, not only colour) */
+.bit-changed {
+  outline: 3px solid var(--changed);
+  outline-offset: 1px;
+  z-index: 1;
+}
+
+/* Fixed (always 0 / always 1) bit: dashed outline */
+.bit-fixed {
+  outline: 2px dashed var(--fixed);
+  outline-offset: 1px;
+}
+
+/* If a cell is both changed and fixed, the changed outline wins */
+.bit-changed.bit-fixed {
+  outline: 3px solid var(--changed);
+}
+
+/* Selected bit: solid accent ring */
+.bit-selected {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+/* Header row "7 6 5 4 3 2 1 0": each label is exactly one cell wide */
+.bit-position {
+  display: inline-block;
+  width: 1.6rem;
+  font-size: 0.7rem;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--muted);
+}
+
+.bit-hex {
+  margin-left: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.bit-more {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Clickable cells (<button class="bit-cell bit-clickable">) */
+.bit-clickable {
+  cursor: pointer;
+}
+
+.bit-clickable:hover:not(:disabled) {
+  border-color: var(--accent);
+  transform: scale(1.12);
+  z-index: 2;
+}
+
+@media (max-width: 45rem) {
+  .bit-cell,
+  .bit-position {
+    width: 1.35rem;
+  }
+
+  .bit-cell {
+    height: 1.7rem;
+    font-size: 0.8rem;
+  }
+}
+/* ========================================================================== *
+ *  13. Analyzer  (matches analyzerView.js)
+ *  The heatmap itself is a bitGrid (section 5), so there are no .heatmap-*
+ *  rules any more.
+ * ========================================================================== */
+.analyzer-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+
+.analyzer-section > h2,
+.analyzer-section > h3 {
+  margin: 0;
+}
+
+.analyzer-hint,
+.analyzer-note,
+.analyzer-source {
+  padding: var(--space-2) var(--space-3);
+  background: var(--info-bg);
+  border-left: 4px solid var(--info);
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+}
+
+.analyzer-source {
+  background: transparent;
+  border-left-color: var(--border-strong);
+  color: var(--muted);
+}
+
+.analyzer-warning {
+  padding: var(--space-2) var(--space-3);
+  background: var(--warn-bg);
+  border-left: 4px solid var(--warn);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.analyzer-warning::before {
+  content: "\26A0\00a0Warning: ";
+}
+
+.analyzer-empty {
+  padding: var(--space-5);
+  text-align: center;
+  color: var(--muted);
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+}
+
+/* Summary cards */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--accent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.stat-note {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Bit frequency table and comparison table */
+.freq-table,
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.freq-table th,
+.freq-table td,
+.compare-table th,
+.compare-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.freq-table thead th,
+.compare-table thead th {
+  background: var(--surface-2);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.freq-table td,
+.compare-table td {
+  font-family: var(--font-mono);
+}
+
+.compare-table tbody th[scope="row"] {
+  background: var(--surface-2);
+  font-weight: 700;
+}
+
+.freq-bar {
+  display: block;
+  width: 100%;
+  min-width: 6rem;
+  height: 0.8rem;
+  background: var(--surface-3);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.freq-fill {
+  display: block;
+  height: 100%;
+  min-width: 0;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 400ms ease;
+}
+
+/* Fixed bit row: dashed left edge + tint (the verdict column also says it in words) */
+.freq-fixed td,
+.freq-fixed th {
+  background: var(--accent-soft);
+  font-weight: 700;
+}
+
+.freq-fixed td:first-child,
+.freq-fixed th:first-child {
+  box-shadow: inset 4px 0 0 var(--fixed);
+}
+
+.analyzer-heatmap {
+  overflow: auto;
+  max-height: 28rem;
+  padding: var(--space-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.analyzer-steps {
+  margin: 0;
+  padding: var(--space-3) var(--space-4) var(--space-3) 2rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.8;
+  overflow-x: auto;
+}

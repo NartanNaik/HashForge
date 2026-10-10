@@ -1,0 +1,11 @@
+PAYMENT INSTRUCTION - HASH FORGE DEMO
+-------------------------------------
+Date    : 10 October 2026
+From    : Alice Sharma, Account 4455-0012
+To      : Bob Kumar, Account 7788-9034
+Amount  : Pay Rs 100 to Bob
+Purpose : Payment for notebooks
+Status  : APPROVED
+
+Only the hash of this message is protected in transit. The message itself
+travels in plain text. This is a fake document used only for the demo.

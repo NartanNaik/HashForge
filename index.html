@@ -1,0 +1,128 @@
+<!--
+  ============================================================================
+   File    : index.html
+   Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+   Module  : The single page shell
+  ============================================================================
+
+   WHAT THIS FILE DOES
+   -------------------
+   The only HTML page of the app. It holds the parts that never change (header
+   with the five module tabs and the theme button, an empty <main id="view">,
+   a footer) and loads the CSS, Chart.js and js/main.js. router.js fills
+   #view with the module the address bar asks for (#/visualizer, ...).
+
+   WHAT I IMPLEMENTED
+   ------------------
+   - <html data-theme="dark">: a default theme, replaced by a tiny inline
+     script in <head> that reads the saved choice (localStorage key
+     "hash-forge-theme") or the OS setting BEFORE the first paint, so there is
+     no dark-to-light flash. main.js takes over afterwards. The script is
+     wrapped in try/catch because storage can be blocked.
+   - Header: logo + name, <nav aria-label="Modules"> with the 5 tab links
+     (the exact hrefs router.js expects) and the #theme-toggle button with a
+     [data-theme-icon] child (main.js fills in the moon / sun).
+   - <main id="view" tabindex="-1">: the router mounts every view here. It
+     contains a <noscript> message, since the app needs JavaScript.
+   - Footer: "NIE • Department of CSE".
+   - A "Skip to content" BUTTON (not a #link, because a "#view" link would
+     change the hash and trigger the hash router). A 3-line inline script
+     moves focus to #view.
+   - The four CSS files, in order: base, layout, components, animations.
+   - Chart.js 4.4.1 (UMD build, global `Chart`) from cdnjs, loaded BEFORE
+     js/main.js, as main.js and charts.js require.
+   - <script type="module" src="js/main.js">.
+
+   NOTES
+   -----
+   - ES modules need http(s): use Live Server, npx serve, GitHub Pages or
+     Netlify, never file://.
+   - charts.js's header mentions node_modules/chart.js/dist/chart.umd.js.
+     The spec says CDN, so I used the CDN (no npm install needed). Both give
+     the same global `Chart`.
+   - Needs assets/logo.svg (used as logo and favicon).
+
+   USED BY : the browser (this is the entry page)
+   DEPENDS : css/*.css, js/main.js, Chart.js (CDN), assets/logo.svg
+  ============================================================================
+-->
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hash Forge</title>
+  <meta name="description" content="Hash Forge: break XOR and RXOR hashes live in the browser, and watch SHA-256 resist the same attacks.">
+  <meta name="color-scheme" content="dark light">
+
+  <!-- Apply the saved / OS theme before the first paint (avoids a flash). -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('hash-forge-theme');
+        if (t !== 'dark' && t !== 'light') {
+          t = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light' : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { /* storage blocked: keep the default theme */ }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+  <button type="button" class="skip-link" id="skip-link">Skip to content</button>
+
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand" href="#/visualizer">
+        <span class="brand-text">
+          <span class="brand-name">Hash Forge</span>
+          <span class="brand-tag">Break XOR. See SHA-256 resist.</span>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="Modules">
+        <a href="#/visualizer">Visualizer</a>
+        <a href="#/forgery">Forgery</a>
+        <a href="#/analyzer">Analyzer</a>
+        <a href="#/collision">Collision</a>
+        <a href="#/learn">Learn</a>
+      </nav>
+
+      <button id="theme-toggle" class="theme-toggle" type="button"
+              aria-label="Dark theme" aria-pressed="true">
+        <span data-theme-icon aria-hidden="true"></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="view" tabindex="-1">
+    <noscript>
+      <p class="router-message">Hash Forge needs JavaScript. Please enable it and reload.</p>
+    </noscript>
+  </main>
+
+  <footer class="site-footer">
+    <p>NIE &bull; Department of CSE</p>
+    <p class="site-footer-sub">Hash Forge &middot; Batch 09 &middot; runs entirely in your browser, no server</p>
+  </footer>
+
+  <!-- Chart.js must load BEFORE main.js (charts.js uses the global `Chart`). -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script type="module" src="js/main.js"></script>
+
+  <script>
+    document.getElementById('skip-link').addEventListener('click', function () {
+      var v = document.getElementById('view');
+      v.focus();
+      v.scrollIntoView();
+    });
+  </script>
+</body>
+</html>
