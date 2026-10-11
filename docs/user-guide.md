@@ -2,8 +2,6 @@
 
 *Break XOR. See SHA-256 resist.*
 
-NIE Mysuru, Department of CSE, Batch 09
-
 ---
 
 ## How to use this guide
@@ -100,7 +98,6 @@ Once deployed to GitHub Pages or Netlify, the demo is just a link.
 - **Top bar:** logo with the tagline, then five tabs: **Visualizer, Forgery, Analyzer, Collision, Learn**.
 - **Sun icon (top right):** switches between dark and light themes. Use dark on a projector.
 - **Main area:** the active tab. The tabs are routed by the address (`#/visualizer`, `#/forgery`, `#/analyzer`, `#/collision`, `#/learn`), so you can bookmark or share a link straight to one tab.
-- **Footer:** "NIE • Department of CSE · Hash Forge · Batch 09 · runs entirely in your browser, no server".
 
 ---
 
@@ -627,8 +624,6 @@ Quick-jump buttons at the top: **What is a hash? · Properties · Applications �
 | RXOR("IH") | 11011010 | DA |
 
 It explains that XOR gives the same hash for both orders, so swapping blocks is a free collision, while RXOR gives different hashes because order matters.
-
-7. **About this project.** The college, department, batch, guide and the team list.
 
 ## Exercises
 
