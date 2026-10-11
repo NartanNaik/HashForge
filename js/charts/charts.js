@@ -42,7 +42,15 @@
  *  DESIGN NOTES
  *  ------------
  *  - Uses the GLOBAL `Chart` object from the UMD build loaded in index.html
- *    (<script src="node_modules/chart.js/dist/chart.umd.js">). No import.
+ *    (<script src="node_modules/chart.js/dist/chart.umd.js">, or the CDN
+ *    build). No import.
+ *  - SIZE: both charts use  responsive: true  and  maintainAspectRatio: false.
+ *    That makes the chart FILL the box it sits in, so the HEIGHT comes from
+ *    the parent element (collisionView.js gives each chart box a fixed
+ *    340 px height). The old version used  aspectRatio: 2, which made the
+ *    height depend on the page width: on a wide screen the chart became very
+ *    tall or got squeezed by the page layout. A canvas given to these
+ *    functions must therefore sit inside a parent with a definite height.
  *  - Re-rendering on the same canvas destroys the old chart first, so there
  *    is no "Canvas is already in use" error.
  *  - Text/grid colors are read from CSS variables (--text, --muted, --border)
@@ -116,7 +124,7 @@ export function destroyChart(canvas) {
 /**
  * Draw the avalanche bar chart: % of output bits changed by a 1-bit input flip.
  *
- * @param {HTMLCanvasElement} canvas
+ * @param {HTMLCanvasElement} canvas  Must sit inside a parent with a fixed height
  * @param {{ labels:string[], values:number[], changedBits?:number[] }} data
  * @returns {Chart} the Chart.js instance
  */
@@ -151,7 +159,7 @@ export function renderAvalancheChart(canvas, data) {
     },
     options: {
       responsive: true,
-      aspectRatio: 2,
+      maintainAspectRatio: false, // fill the parent box (its height is set by the view)
       plugins: {
         title: {
           display: true,
@@ -191,7 +199,7 @@ export function renderAvalancheChart(canvas, data) {
 /**
  * Draw the collision chart: attempts needed vs truncated SHA-256 size.
  *
- * @param {HTMLCanvasElement} canvas
+ * @param {HTMLCanvasElement} canvas  Must sit inside a parent with a fixed height
  * @param {{ bits:number, attempts:number, expectedAttempts:number,
  *           elapsedMs?:number, found?:boolean }[]} results
  *        Output of birthdaySweep() in attacks/collision.js
@@ -232,7 +240,7 @@ export function renderCollisionChart(canvas, results) {
     },
     options: {
       responsive: true,
-      aspectRatio: 2,
+      maintainAspectRatio: false, // fill the parent box (its height is set by the view)
       plugins: {
         title: {
           display: true,

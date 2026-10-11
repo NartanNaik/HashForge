@@ -79,12 +79,33 @@
  *  - Everything is built with createElement/textContent (no innerHTML), so
  *    text typed by the user can never inject HTML.
  *
+ *  FIX IN THIS VERSION (wrong "Message B" in the XOR collision)
+ *  ------------------------------------------------------------
+ *  The collision result can contain several byte arrays: the new message AND
+ *  a small array describing WHICH blocks were swapped (for example [0, 1]).
+ *  The old picker listed "swapped" as a possible name for the message, so it
+ *  displayed those two block numbers (hex 0001) as Message B. Now:
+ *    - the index-style fields are on an IGNORED list and never used,
+ *    - the picker checks that the candidate really is a usable collision
+ *      message (different from the original, and for the XOR swap the same
+ *      padded length), and
+ *    - if no named field fits, it falls back to any byte array that does.
+ *  The hashes shown are still recomputed here with the real xorHash() /
+ *  rxorHash(), so a wrong message can never be displayed as a success.
+ *
+ *  CONFIRMED against collision.js: both xorBlockSwapCollision() and
+ *  rxorCollision() return the new message in the field `collision`
+ *  (plus `original`, `hashOriginal`, `hashCollision`, `collides`, `method`;
+ *  the XOR one also has `swapped` = the two block INDEXES, the RXOR one has
+ *  `appendedBlock`). `collision` is now the first name tried.
+ *
  *  ASSUMPTIONS ABOUT YOUR OTHER FILES (please check)
  *  -------------------------------------------------
  *  I wrote this against the header comments of your files, not their code.
  *  Where a header did not name an exact field, I gathered the guesses in ONE
  *  object, RESULT_FIELDS, near the top of this file. If something shows
- *  "unexpected shape" in a toast, fix the names there and nothing else.
+ *  "unexpected shape" in a toast, the message lists the field names that the
+ *  result really has; add the right one to RESULT_FIELDS and nothing else.
  *    - xorBlockSwapCollision(msg, blockBytes) returns the new message under
  *      one of the names listed in RESULT_FIELDS.xorMessage.
  *    - rxorCollision(msg, blockBytes, otherBytes) returns the new message
@@ -167,11 +188,31 @@ const DEFAULT_BIRTHDAY_BITS = 16;
 
 /**
  * The ONLY place that knows the field names returned by attacks/*.js.
- * Each list is tried in order; the first name that exists is used.
+ * Each list is tried in order; the first name that exists AND holds a usable
+ * message is used.
+ *
+ * `ignored` lists fields that hold block INDEXES (for example [0, 1]) and not
+ * a message. They must never be shown as a message.
  */
 const RESULT_FIELDS = {
-  xorMessage: ['swappedMessage', 'collidingMessage', 'newMessage', 'swapped', 'message'],
-  rxorMessage: ['collidingMessage', 'finalMessage', 'newMessage', 'message'],
+  xorMessage: [
+    'collision',
+    'swappedMessage',
+    'collidingMessage',
+    'collisionMessage',
+    'newMessage',
+    'finalMessage',
+    'message',
+  ],
+  rxorMessage: [
+    'collision',
+    'collidingMessage',
+    'finalMessage',
+    'collisionMessage',
+    'newMessage',
+    'message',
+  ],
+  ignored: ['swapped', 'swappedIndices', 'indices', 'blocksSwapped', 'swappedBlocks'],
   algorithms: {
     xor: ['xor', 'XOR'],
     rxor: ['rxor', 'RXOR'],
@@ -234,7 +275,9 @@ function previewText(bytes) {
 
 function toBytes(value) {
   if (value instanceof Uint8Array) return value;
-  if (Array.isArray(value)) return Uint8Array.from(value);
+  if (Array.isArray(value) && value.every((n) => Number.isInteger(n) && n >= 0 && n <= 255)) {
+    return Uint8Array.from(value);
+  }
   return undefined;
 }
 
@@ -246,15 +289,64 @@ function pick(obj, names) {
   return undefined;
 }
 
-/** Gets the new message out of a collision result, or throws a clear error. */
-function pickMessage(result, names, fnName) {
-  const bytes = toBytes(result) || toBytes(pick(result, names));
-  if (!bytes) {
-    throw new Error(
-      `${fnName}() returned a result in an unexpected shape. Update RESULT_FIELDS in collisionView.js.`,
-    );
+/** The message with zero bytes added up to a whole number of blocks. */
+function zeroPad(bytes, blockBytes) {
+  const rest = bytes.length % blockBytes;
+  if (rest === 0) return Uint8Array.from(bytes);
+  const out = new Uint8Array(bytes.length + blockBytes - rest);
+  out.set(bytes);
+  return out;
+}
+
+/**
+ * Gets the new message out of a collision result, or throws a clear error.
+ *
+ * A candidate is only accepted if it really looks like a collision message:
+ *   - it is different from the original (and from its zero-padded form), and
+ *   - mode 'swap'  : it has the same length as the padded original
+ *                    (blocks were only rearranged),
+ *   - mode 'append': it is at least two blocks long (the correcting block
+ *                    was appended).
+ * Fields listed in RESULT_FIELDS.ignored (block indexes) are never used.
+ */
+function pickMessage(result, names, fnName, original, blockBytes, mode) {
+  const padded = zeroPad(original, blockBytes);
+
+  const usable = (bytes) => {
+    if (!bytes) return false;
+    if (bytesEqual(bytes, original) || bytesEqual(bytes, padded)) return false;
+    if (mode === 'swap' && bytes.length !== padded.length) return false;
+    if (mode === 'append' && bytes.length < 2 * blockBytes) return false;
+    return true;
+  };
+
+  // 1. The function returned the message itself.
+  const direct = toBytes(result);
+  if (usable(direct)) return direct;
+
+  // 2. A field with one of the expected names.
+  for (const name of names) {
+    if (RESULT_FIELDS.ignored.includes(name)) continue;
+    const bytes = toBytes(result && result[name]);
+    if (usable(bytes)) return bytes;
   }
-  return bytes;
+
+  // 3. Any other byte array in the result that is a usable message
+  //    (the longest wins, like the test helper findMessage()).
+  const candidates = [];
+  for (const [key, value] of Object.entries(result ?? {})) {
+    if (RESULT_FIELDS.ignored.includes(key)) continue;
+    const bytes = toBytes(value);
+    if (usable(bytes)) candidates.push(bytes);
+  }
+  candidates.sort((a, b) => b.length - a.length);
+  if (candidates.length > 0) return candidates[0];
+
+  const fields = result && typeof result === 'object' ? Object.keys(result).join(', ') : typeof result;
+  throw new Error(
+    `${fnName}() returned a result in an unexpected shape (fields: ${fields}). ` +
+      'Add the right field name to RESULT_FIELDS in collisionView.js.',
+  );
 }
 
 /** Turns one algorithm entry of avalancheTest() into numbers the view needs. */
@@ -271,6 +363,18 @@ function normalizeAlgorithm(raw, label) {
   const changed = countSetBits(diff);
   const total = diff.length * 8;
   return { before, after, diff, changed, total, percent: (changed / total) * 100 };
+}
+
+/**
+ * Chart.js draws into the canvas using the size of its parent box. These inline
+ * styles make the canvas fill that box exactly, so a page stylesheet such as
+ * "canvas { height: auto }" cannot squash or stretch the chart.
+ */
+function styleCanvas(canvas) {
+  canvas.style.display = 'block';
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  canvas.style.maxWidth = '100%';
 }
 
 function avalancheVerdict(changed, percent) {
@@ -412,6 +516,7 @@ export function renderCollisionView(container) {
   const sweepProgress = el('p', 'sweep-progress');
   const sweepChartBox = makeChartBox();
   const sweepCanvas = el('canvas');
+  styleCanvas(sweepCanvas);
   sweepCanvas.setAttribute('role', 'img');
   sweepCanvas.setAttribute(
     'aria-label',
@@ -448,6 +553,7 @@ export function renderCollisionView(container) {
 
   const avalancheChartBox = makeChartBox();
   const avalancheCanvas = el('canvas');
+  styleCanvas(avalancheCanvas);
   avalancheCanvas.setAttribute('role', 'img');
   avalancheCanvas.setAttribute(
     'aria-label',
@@ -468,7 +574,9 @@ export function renderCollisionView(container) {
   function makeChartBox() {
     const box = el('div', 'chart-box');
     box.style.position = 'relative';
-    box.style.height = '300px';
+    box.style.width = '100%';
+    box.style.height = '340px';
+    box.style.minHeight = '340px';
     box.hidden = true;
     return box;
   }
@@ -668,7 +776,14 @@ export function renderCollisionView(container) {
       const t0 = performance.now();
       const result = await xorBlockSwapCollision(msg, state.blockBytes);
       const ms = performance.now() - t0;
-      const collided = pickMessage(result, RESULT_FIELDS.xorMessage, 'xorBlockSwapCollision');
+      const collided = pickMessage(
+        result,
+        RESULT_FIELDS.xorMessage,
+        'xorBlockSwapCollision',
+        msg,
+        state.blockBytes,
+        'swap',
+      );
       await showCollision('XOR', msg, collided, xorHash, ms);
     } catch (err) {
       toast.error(err);
@@ -682,7 +797,14 @@ export function renderCollisionView(container) {
       const t0 = performance.now();
       const result = await rxorCollision(msg, state.blockBytes, getOtherBytes());
       const ms = performance.now() - t0;
-      const collided = pickMessage(result, RESULT_FIELDS.rxorMessage, 'rxorCollision');
+      const collided = pickMessage(
+        result,
+        RESULT_FIELDS.rxorMessage,
+        'rxorCollision',
+        msg,
+        state.blockBytes,
+        'append',
+      );
       await showCollision('RXOR', msg, collided, rxorHash, ms);
     } catch (err) {
       toast.error(err);
@@ -806,7 +928,10 @@ export function renderCollisionView(container) {
       }
 
       sweepChartBox.hidden = false;
-      renderCollisionChart(sweepCanvas, results);
+      // Draw on the next frame so the box has its real size when Chart.js measures it.
+      requestAnimationFrame(() => {
+        if (alive) renderCollisionChart(sweepCanvas, results);
+      });
 
       for (const r of results) {
         const text = r.found
@@ -859,12 +984,15 @@ export function renderCollisionView(container) {
   }
 
   function renderAvalancheResult(result, bitIndex) {
+    // avalancheTest() returns { bitIndex, original, modified, results: { XOR, RXOR, 'SHA-256' } }.
+    // The per-algorithm entries live inside `results`, not at the top level.
+    const source = result && typeof result === 'object' && result.results ? result.results : result;
     const algorithms = [
       { title: 'XOR', names: RESULT_FIELDS.algorithms.xor },
       { title: 'RXOR', names: RESULT_FIELDS.algorithms.rxor },
       { title: 'SHA-256', names: RESULT_FIELDS.algorithms.sha },
     ].map(({ title: algoTitle, names }) => {
-      const raw = pick(result, names);
+      const raw = pick(source, names);
       if (!raw) {
         throw new Error(
           `avalancheTest() has no entry for ${algoTitle}. Update RESULT_FIELDS in collisionView.js.`,
@@ -935,7 +1063,10 @@ export function renderCollisionView(container) {
       const data = toChartData(batch);
 
       avalancheChartBox.hidden = false;
-      renderAvalancheChart(avalancheCanvas, data);
+      // Draw on the next frame so the box has its real size when Chart.js measures it.
+      requestAnimationFrame(() => {
+        if (alive) renderAvalancheChart(avalancheCanvas, data);
+      });
 
       avalancheSummary.replaceChildren();
       data.labels.forEach((labelText, i) => {
