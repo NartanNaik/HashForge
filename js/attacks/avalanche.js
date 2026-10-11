@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/attacks/avalanche.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Avalanche Effect Test (supports Slides 7 and 9)
  * ============================================================================
  *

@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/core/xorHash.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Simple XOR hash function (Slides 6 and 7)
  * ============================================================================
  *

@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/ui/forgeryView.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Forgery Attack Lab view (proves Slide 10)
  * ============================================================================
  *

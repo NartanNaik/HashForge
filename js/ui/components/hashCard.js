@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/ui/components/hashCard.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Hash display card (hex + binary + copy + match/mismatch state)
  * ============================================================================
  *

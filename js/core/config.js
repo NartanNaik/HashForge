@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/core/config.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge  
  *  Module  : Shared constants (one place to change project-wide settings)
  * ============================================================================
  *
@@ -36,10 +36,6 @@
  *  Animation (visualizer)
  *    ANIMATION_SPEEDS        { slow: 1200, normal: 700, fast: 300 } (ms/step)
  *    DEFAULT_ANIMATION_SPEED 'normal'
- *
- *  Project info (footer, Learn page, README)
- *    PROJECT_INFO            name, tagline, institution, department, batch,
- *                            guide, team members with USNs
  *
  *  Helpers
  *    blockBitsToBytes(bits)  16 -> 2; throws if the size is not allowed
@@ -116,27 +112,6 @@ export const ANIMATION_SPEEDS = Object.freeze({
 
 /** Speed selected when the app starts. */
 export const DEFAULT_ANIMATION_SPEED = 'normal';
-
-// ---------------------------------------------------------------------------
-// Project info
-// ---------------------------------------------------------------------------
-
-export const PROJECT_INFO = Object.freeze({
-  name: 'Hash Forge',
-  tagline: 'We break XOR and RXOR hashes live, and show SHA-256 resisting the same attacks.',
-  institution: 'The National Institute of Engineering, Mysuru',
-  department: 'Department of Computer Science and Engineering',
-  batch: '09',
-  guide: 'Dr. B S Jayasri, Associate Professor',
-  team: Object.freeze([
-    Object.freeze({ name: 'S S Sai Kumar', usn: '4NI23CS178' }),
-    Object.freeze({ name: 'Sachin Kumar Jha', usn: '4NI23CS179' }),
-    Object.freeze({ name: 'Sakshi Rajesh Naik', usn: '4NI23CS181' }),
-    Object.freeze({ name: 'Sakshyam Kataria', usn: '4NI23CS182' }),
-    Object.freeze({ name: 'Monalika U', usn: '4NI24CS418' }),
-    Object.freeze({ name: 'Nartan Maruti Naik', usn: '4NI24CS419' }),
-  ]),
-});
 
 // ---------------------------------------------------------------------------
 // Helpers

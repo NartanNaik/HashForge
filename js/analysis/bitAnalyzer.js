@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/analysis/bitAnalyzer.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Predictable-Data Analyzer (proves Slide 3: 2^-112 vs 2^-128)
  * ============================================================================
  *

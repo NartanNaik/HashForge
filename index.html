@@ -1,7 +1,7 @@
 <!--
   ============================================================================
    File    : index.html
-   Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+   Project : Hash Forge
    Module  : The single page shell
   ============================================================================
 
@@ -24,7 +24,6 @@
      [data-theme-icon] child (main.js fills in the moon / sun).
    - <main id="view" tabindex="-1">: the router mounts every view here. It
      contains a <noscript> message, since the app needs JavaScript.
-   - Footer: "NIE • Department of CSE".
    - A "Skip to content" BUTTON (not a #link, because a "#view" link would
      change the hash and trigger the hash router). A 3-line inline script
      moves focus to #view.
@@ -107,10 +106,9 @@
     </noscript>
   </main>
 
-  <footer class="site-footer">
-    <p>NIE &bull; Department of CSE</p>
-    <p class="site-footer-sub">Hash Forge &middot; Batch 09 &middot; runs entirely in your browser, no server</p>
-  </footer>
+<footer class="site-footer">
+  <p class="site-footer-sub">Hash Forge &middot; runs entirely in your browser, no server</p>
+</footer>
 
   <!-- Chart.js must load BEFORE main.js (charts.js uses the global `Chart`). -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"

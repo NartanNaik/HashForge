@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/core/rxorHash.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Rotated XOR (RXOR) hash function (Slides 8 and 9)
  * ============================================================================
  *

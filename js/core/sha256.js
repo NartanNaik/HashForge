@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/core/sha256.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : SHA-256 wrapper (the "real" cryptographic hash for comparison)
  * ============================================================================
  *

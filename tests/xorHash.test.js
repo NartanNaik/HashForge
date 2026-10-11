@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : tests/xorHash.test.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Unit tests for js/core/xorHash.js (Slides 6 and 7)
  * ============================================================================
  *

@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : css/components.css
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Look of every reusable piece and every view element
  * ============================================================================
  *
@@ -235,7 +235,6 @@ input[type="file"] {
 .forgery-panel,
 .collision-panel,
 .learn-card,
-.learn-about,
 .race-lane,
 .message-box,
 .avalanche-col,
@@ -1104,10 +1103,6 @@ progress.viz-progress::-moz-progress-bar { background: var(--accent); }
   flex-direction: column;
   gap: var(--space-3);
   overflow-x: auto;
-}
-
-.learn-about {
-  background: var(--surface-2);
 }
 
 /* ========================================================================== *

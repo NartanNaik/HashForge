@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : tests/bitAnalyzer.test.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Unit tests for js/analysis/bitAnalyzer.js (Slide 3: 2^-112 vs 2^-128)
  * ============================================================================
  *

@@ -1,6 +1,6 @@
 <!--
   File    : README.md
-  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+  Project : Hash Forge
 
   WHAT THIS FILE DOES
   The front page of the repository: what the project is, the team, how to set
@@ -17,18 +17,6 @@ Hash Forge is a browser-based lab that turns the theory of simple hash
 functions (XOR, rotated XOR and their security limits) into something you can
 see, click and break. It runs **entirely in the browser**: no backend, no
 database.
-
-**Institution:** NIE Mysuru, Department of CSE, Batch 09
-**Guide:** [Guide name]
-
-## Team
-
-| Name | USN |
-|---|---|
-| [Member 1] | [USN] |
-| [Member 2] | [USN] |
-| [Member 3] | [USN] |
-| [Member 4] | [USN] |
 
 ## Features
 

@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/core/padding.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Message padding and block splitting (Slide 2)
  * ============================================================================
  *

@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/ui/collisionView.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Collision and Avalanche Lab view (proves Slides 7 and 9)
  * ============================================================================
  *

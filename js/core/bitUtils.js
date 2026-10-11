@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/core/bitUtils.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Low-level byte and bit helpers (the foundation of the project)
  * ============================================================================
  *

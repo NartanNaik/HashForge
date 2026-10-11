@@ -1,6 +1,6 @@
 <!--
   File    : docs/viva-qna.md
-  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+  Project : Hash Forge
 
   WHAT THIS FILE DOES
   Likely viva questions from the guide, with short answers that match what

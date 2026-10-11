@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/ui/visualizerView.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Hash Visualizer view (proves Slides 2, 3, 6, 8, 9)
  * ============================================================================
  *

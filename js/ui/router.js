@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/ui/router.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Tiny hash-based router (swaps the module views into #view)
  * ============================================================================
  *

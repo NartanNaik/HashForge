@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : tests/collision.test.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Unit tests for js/attacks/collision.js (Slides 7, 9 and 10)
  * ============================================================================
  *

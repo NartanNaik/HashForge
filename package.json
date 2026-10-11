@@ -1,7 +1,7 @@
 {
   "name": "hash-forge",
   "version": "1.0.0",
-  "description": "Browser-based lab that breaks XOR and RXOR hashes live and shows SHA-256 resisting the same attacks. NIE Mysuru, Dept. of CSE, Batch 09.",
+  "description": "Browser-based lab that breaks XOR and RXOR hashes live and shows SHA-256 resisting the same attacks.",
   "type": "module",
   "private": true,
   "license": "MIT",

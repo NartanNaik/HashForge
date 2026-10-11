@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : tests/rxorHash.test.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Unit tests for js/core/rxorHash.js (Slides 8 and 9)
  * ============================================================================
  *

@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/attacks/forgery.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Forgery Attack (proves Slide 10: "only the hash code is encrypted")
  * ============================================================================
  *

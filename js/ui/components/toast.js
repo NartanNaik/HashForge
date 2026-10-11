@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/ui/components/toast.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Toast notifications (small popups for errors and feedback)
  * ============================================================================
  *

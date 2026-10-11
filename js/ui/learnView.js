@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/ui/learnView.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Learn Panel view (the presentation companion, Slides 1, 4, 5)
  * ============================================================================
  *
@@ -33,8 +33,6 @@
  *  6. Worked example             "HI" and "IH" with 1-byte blocks, calculated
  *                                LIVE with the real xorHash() / rxorHash(),
  *                                so the numbers on screen can never be wrong.
- *  7. About this project         name, tagline, institution, team (from
- *                                PROJECT_INFO in config.js).
  *
  *  A row of "jump to" buttons at the top scrolls to each section.
  *
@@ -76,10 +74,6 @@
  *    - Routes are #/visualizer, #/forgery, #/analyzer and #/collision. They
  *      are collected in ROUTES; change them there if router.js uses
  *      different paths.
- *    - config.js exports PROJECT_INFO with some of: name, tagline,
- *      institution, department, batch, guide, and a team array whose items
- *      are either strings or objects with name / usn. Missing fields are
- *      simply skipped.
  *    - xorHash / rxorHash(bytes, blockBytes) are synchronous and use zero
  *      padding with no length block (the default).
  *
@@ -88,15 +82,12 @@
  *    .learn-view  .learn-intro  .learn-nav  .learn-section  .learn-section-intro
  *    .learn-grid  .learn-card  .learn-card-title  .learn-formula  .learn-list
  *    .learn-table  .learn-table-wrap  .learn-link  .learn-example
- *    .learn-example-table  .learn-note  .learn-about
  *
  *  USED BY : js/ui/router.js (route #/learn)
  *  DEPENDS : core/config.js, core/bitUtils.js, core/xorHash.js,
  *            core/rxorHash.js
  * ============================================================================
  */
-
-import { PROJECT_INFO } from '../core/config.js';
 import { textToBytes, bytesToBinaryString, bytesToHex } from '../core/bitUtils.js';
 import { xorHash } from '../core/xorHash.js';
 import { rxorHash } from '../core/rxorHash.js';
@@ -474,40 +465,6 @@ function buildExample() {
   return { section, heading };
 }
 
-function teamLine(member) {
-  if (typeof member === 'string') return member;
-  if (member && typeof member === 'object') {
-    const name = member.name || '';
-    const usn = member.usn ? ` (${member.usn})` : '';
-    return `${name}${usn}`.trim();
-  }
-  return '';
-}
-
-function buildAbout() {
-  const info = PROJECT_INFO && typeof PROJECT_INFO === 'object' ? PROJECT_INFO : {};
-  const section = el('section', 'learn-section learn-about');
-  section.append(el('h3', null, 'About this project'));
-
-  if (info.name) section.append(el('p', null, info.name));
-  if (info.tagline) section.append(el('p', null, info.tagline));
-
-  const lines = [info.institution, info.department, info.batch ? `Batch ${info.batch}` : '']
-    .filter(Boolean)
-    .join(' • ');
-  if (lines) section.append(el('p', null, lines));
-  if (info.guide) section.append(el('p', null, `Guide: ${info.guide}`));
-
-  const team = Array.isArray(info.team) ? info.team : Array.isArray(info.members) ? info.members : [];
-  const names = team.map(teamLine).filter(Boolean);
-  if (names.length > 0) {
-    const list = el('ul', 'learn-list');
-    for (const n of names) list.append(el('li', null, n));
-    section.append(el('p', null, 'Team:'), list);
-  }
-  return section;
-}
-
 // ---------------------------------------------------------------------------
 // The view
 // ---------------------------------------------------------------------------
@@ -554,7 +511,6 @@ export function renderLearnView(container) {
 
   root.append(nav);
   for (const item of NAV) root.append(built[item.id].section);
-  root.append(buildAbout());
 
   container.replaceChildren(root);
 

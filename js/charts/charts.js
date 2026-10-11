@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/charts/charts.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Chart wrappers (Chart.js) for the Collision and Avalanche Lab
  * ============================================================================
  *

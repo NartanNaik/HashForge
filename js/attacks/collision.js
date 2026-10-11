@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/attacks/collision.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Collision Finder (supports Slides 7, 9 and 10)
  * ============================================================================
  *

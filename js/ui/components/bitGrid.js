@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : js/ui/components/bitGrid.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Reusable bit-grid component (used by almost every view)
  * ============================================================================
  *

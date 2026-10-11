@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  *  File    : tests/forgery.test.js
- *  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+ *  Project : Hash Forge
  *  Module  : Unit tests for js/attacks/forgery.js (Slide 10)
  * ============================================================================
  *

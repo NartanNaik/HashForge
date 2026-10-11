@@ -1,6 +1,6 @@
 <!--
   File    : docs/demo-script.md
-  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+  Project : Hash Forge
 
   WHAT THIS FILE DOES
   A minute-by-minute plan for the live demo: who speaks, what to click, what

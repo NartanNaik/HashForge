@@ -1,6 +1,6 @@
 <!--
   File    : docs/architecture.md
-  Project : Hash Forge (NIE Mysuru, Dept. of CSE, Batch 09)
+  Project : Hash Forge
 
   WHAT THIS FILE DOES
   Explains how the code is organised: the layers, the data flow, the rules
