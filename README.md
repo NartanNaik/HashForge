@@ -143,7 +143,3 @@ HashForge/
 ## Disclaimer
 
 XOR and RXOR hashes are taught here as examples of **insecure** designs. Never use them for real security. Use SHA-256 or SHA-3, and HMAC or digital signatures when an attacker can change both the message and the hash.
-
-## License
-
-Add a license of your choice (for example MIT) before publishing.
